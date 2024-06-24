@@ -10,10 +10,10 @@ def generate_key():
     key = Fernet.generate_key()
     with open("secret.key", "wb") as key_file:
         key_file.write(key)
-    messagebox.showinfo("Key Generated", "Chiave segreta generata e salvata come 'secret.key'. NASCONDILA E CONSERVALA!")
+    messagebox.showinfo("Key Generated", "The new key was generated in the current directory as 'secret.key'. STORE IT SOMEWHERE ONLY YOU CAN ACCESS IT!")
 
 def load_key():
-    file_path = filedialog.askopenfilename(title="Seleziona il file chiave segreta")
+    file_path = filedialog.askopenfilename(title="Select the key file")
     with open(file_path, "rb") as key_file:
         key = key_file.read()
     return key
@@ -51,6 +51,10 @@ def load_passwords(key):
     return passwords
 
 def add_password():
+    if key is None:
+        messagebox.showerror("Error", "You must load a key first!")
+        return
+
     service = service_var.get()
     username = username_var.get()
     password = password_var.get()
@@ -59,11 +63,15 @@ def add_password():
         passwords.append((service, username, password))
         save_passwords(passwords, key)
         list_services()
-        messagebox.showinfo("Success", "Password salvata con successo!")
+        messagebox.showinfo("Success", "Password successfully saved!")
     else:
-        messagebox.showerror("Error", "Tutti i campi devono essere riempiti!")
+        messagebox.showerror("Error", "You should fill all fields!")
 
 def view_password():
+    if key is None:
+        messagebox.showerror("Error", "You must load a key first!")
+        return
+
     selected_service = service_listbox.get(service_listbox.curselection())
     for service, username, password in passwords:
         if service == selected_service:
@@ -72,6 +80,10 @@ def view_password():
             break
 
 def change_password():
+    if key is None:
+        messagebox.showerror("Error", "You must load a key first!")
+        return
+
     selected_service = service_listbox.get(service_listbox.curselection())
     new_password = password_var.get()
     if new_password:
@@ -80,12 +92,16 @@ def change_password():
                 passwords[i] = (service, username, new_password)
                 save_passwords(passwords, key)
                 list_services()
-                messagebox.showinfo("Success", "Password cambiata con successo!")
+                messagebox.showinfo("Success", "Password successfully changed!")
                 break
     else:
-        messagebox.showerror("Error", "La nuova password non può essere vuota!")
+        messagebox.showerror("Error", "The new password can't be empty!")
 
 def list_services():
+    if key is None:
+        messagebox.showerror("Error", "You must load a key first!")
+        return
+
     service_listbox.delete(0, END)
     for service, _, _ in passwords:
         service_listbox.insert(END, service)
@@ -122,16 +138,19 @@ Entry(root, textvariable=username_var).grid(row=1, column=1, padx=10, pady=5)
 Label(root, text="Password:").grid(row=2, column=0, sticky='e')
 Entry(root, textvariable=password_var).grid(row=2, column=1, padx=10, pady=5)
 
-Button(root, text="Aggiungi Password", command=add_password).grid(row=3, column=1, pady=10)
+Button(root, text="Add Password", command=add_password).grid(row=3, column=1, pady=10)
+
+
+Label(root, text="Your Services:").grid(row=0, column=2, padx=10, pady=5)
 
 service_listbox = Listbox(root, selectmode=SINGLE)
 service_listbox.grid(row=0, column=2, rowspan=6, padx=10)
 
-Button(root, text="Visualizza Password", command=view_password).grid(row=4, column=1, pady=5)
-Button(root, text="Cambia Password", command=change_password).grid(row=5, column=1, pady=5)
+Button(root, text="View Password", command=view_password).grid(row=4, column=1, pady=5)
+Button(root, text="Change Password", command=change_password).grid(row=5, column=1, pady=5)
 
-Button(root, text="Carica Chiave Esistente", command=load_existing_key).grid(row=6, column=0, pady=5)
-Button(root, text="Genera e Carica Chiave", command=generate_and_load_key).grid(row=6, column=1, pady=5)
+Button(root, text="Load Existing Key", command=load_existing_key).grid(row=6, column=0, pady=5)
+Button(root, text="Generate and Load Key", command=generate_and_load_key).grid(row=6, column=1, pady=5)
 
 # Avvia il loop principale della GUI
 root.mainloop()
