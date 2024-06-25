@@ -60,19 +60,31 @@ def add_password():
     password = password_var.get()
 
     if service and username and password:
+
+        # Check if the service already exists
+        for s, _, _ in passwords:
+            if s == service:
+                messagebox.showerror("Error", f"The service '{service}' already exists. Select it from the list and use 'Change Password' to modify the existing password.")
+                return
+
         passwords.append((service, username, password))
         save_passwords(passwords, key)
         list_services()
         messagebox.showinfo("Success", "Password successfully saved!")
     else:
-        messagebox.showerror("Error", "You should fill all fields!")
+        messagebox.showerror("Error", "You should fill in all fields!")
 
 def view_password():
     if key is None:
         messagebox.showerror("Error", "You must load a key first!")
         return
 
-    selected_service = service_listbox.get(service_listbox.curselection())
+    selected_indices = service_listbox.curselection()
+    if not selected_indices:
+        messagebox.showerror("Error", "You must select a service first!")
+        return
+
+    selected_service = service_listbox.get(selected_indices)
     for service, username, password in passwords:
         if service == selected_service:
             messagebox.showinfo(f"Password for {service}",
@@ -84,7 +96,12 @@ def change_password():
         messagebox.showerror("Error", "You must load a key first!")
         return
 
-    selected_service = service_listbox.get(service_listbox.curselection())
+    selected_indices = service_listbox.curselection()
+    if not selected_indices:
+        messagebox.showerror("Error", "You must select a service first!")
+        return
+
+    selected_service = service_listbox.get(selected_indices)
     new_password = password_var.get()
     if new_password:
         for i, (service, username, password) in enumerate(passwords):
@@ -96,6 +113,7 @@ def change_password():
                 break
     else:
         messagebox.showerror("Error", "The new password can't be empty!")
+
 
 def list_services():
     if key is None:
@@ -116,6 +134,9 @@ def load_existing_key():
 def generate_and_load_key():
     generate_key()
     load_existing_key()
+
+
+
 
 # Inizializza la finestra principale di Tkinter
 root = Tk()
