@@ -20,7 +20,7 @@ A simple password manager capable of securely storing your passwords. 🗝️
 1. Navigate to the script folder in the terminal or powershell/command prompt.
 2. Launch the script with Python by executing:
     ```
-    python Cifra.py
+    python Manager.py
     ```
 
 ## 📌 Notes
