@@ -1,3 +1,7 @@
+
+![Frame 1](https://github.com/user-attachments/assets/ab74a5b3-6ff7-4578-939f-99f14d34ca67)
+
+
 # 🔒 Simple Password Manager 
 
 ![Python](https://img.shields.io/badge/-Python-black?style=flat-square&logo=Python)
